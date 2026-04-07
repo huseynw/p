@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ | Premium Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+        }
+
+        /* Dashboard */
+        #dashboard {
+            display: none;
+            padding: 20px;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .offline .status-dot {
+            background: var(--danger);
+            box-shadow: 0 0 10px var(--danger);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        /* Panels */
+        .panel {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        /* Dyno Switch */
+        .dyno-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-muted);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: white;
+        }
+
+        /* Config Vars */
+        .config-list {
+            overflow-y: auto;
+            max-height: 400px;
+            padding-right: 5px;
+        }
+        
+        .config-list::-webkit-scrollbar { width: 6px; }
+        .config-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .config-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .config-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .config-key { font-weight: bold; color: var(--secondary); margin-bottom: 5px; }
+        .config-value { color: var(--text-muted); font-size: 14px; word-break: break-all; }
+
+        /* Logs Terminal */
+        .terminal {
+            background: #000;
+            border-radius: 12px;
+            padding: 15px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            height: 450px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            color: #fff;
+        }
+
+        .log-line { margin-bottom: 5px; line-height: 1.4; }
+        .log-time { color: #88c0d0; margin-right: 10px; }
+        .log-info { color: #a3be8c; }
+        .log-error { color: #bf616a; }
+        .log-warn { color: #ebcb8b; }
+
+        /* Quick Actions (Premium Addition) */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--text-main); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+        /* Modal for Editing Config */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        .modal textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            resize: vertical;
+        }
+
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-cancel { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+        .btn-cancel:hover { background: rgba(239, 68, 68, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="glass login-box">
+            <h1>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝</h1>
+            <div class="input-group">
+                <label><i class="fa-solid fa-key"></i> Heroku API Key</label>
+                <input type="password" id="api-key" placeholder="API açarını daxil et...">
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-server"></i> App Name (Tətbiq Adı)</label>
+                <input type="text" id="app-name" placeholder="Məsələn: silgi-userbot-1">
+            </div>
+            <button class="btn" onclick="connectHeroku()">Panelə Daxil Ol <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        <header class="glass">
+            <h1>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝</h1>
+            <div class="status-badge" id="bot-status">
+                <div class="status-dot"></div>
+                <span id="status-text">Online</span>
+            </div>
+        </header>
+
+        <main class="grid-container">
+            <div class="left-col">
+                <div class="glass panel" style="margin-bottom: 20px;">
+                    <div class="panel-title"><i class="fa-solid fa-power-off"></i> Dyno İdarəetməsi</div>
+                    <div class="dyno-control">
+                        <div>
+                            <h3>Worker Dyno</h3>
+                            <p style="font-size: 12px; color: var(--text-muted);">Botun işləmə vəziyyəti</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="dyno-toggle" checked onchange="toggleDyno(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-bolt"></i> Sürətli Əmrlər</div>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="addLog('Bot yenidən başladılır...', 'warn')"><i class="fa-solid fa-rotate-right"></i> Restart</button>
+                        <button class="action-btn" onclick="document.getElementById('terminal-output').innerHTML = ''"><i class="fa-solid fa-broom"></i> Logları Təmizlə</button>
+                    </div>
+                </div>
+
+                <div class="glass panel">
+                    <div class="panel-title"><i class="fa-solid fa-sliders"></i> Config Vars</div>
+                    <div class="config-list" id="config-list">
+                        </div>
+                </div>
+            </div>
+
+            <div class="glass panel">
+                <div class="panel-title"><i class="fa-solid fa-terminal"></i> Canlı Loglar (Real-time)</div>
+                <div class="terminal" id="terminal-output">
+                    </div>
+            </div>
+        </main>
+
+        <footer>
+            &copy; SilgiUserbot | Bütün hüquqlar qorunur.
+        </footer>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="glass modal-content">
+            <h2 id="modal-key-title" style="margin-bottom: 10px; color: var(--primary);">SESSION</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Dəyəri redaktə et:</p>
+            <textarea id="modal-value-input"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()" style="width: auto;">Ləğv et</button>
+                <button class="btn" onclick="saveConfig()" style="width: auto;">Yadda Saxla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Məlumatları simulyasiya edirik (Çünki brauzerdən birbaşa Heroku API-yə qoşulanda CORS xətası ola bilər. 
+        // Real istifadədə fetch() funksiyaları aşağıdakı məntiq üzərində qurulacaq).
+        
+        let mockConfigs = {
+            "API_ID": "1234567",
+            "API_HASH": "a1b2c3d4e5f6g7h8i9j0",
+            "SESSION": "1AZPWv... (gizlədilib)",
+            "ALIVE_NAME": "⚝ 𝑺𝑰𝑳𝑮𝑰 ⚝",
+            "SUDO_USERS": "123456789 987654321",
+            "HEROKU_API_KEY": "••••••••••••••••",
+            "HEROKU_APP_NAME": "silgi-userbot"
+        };
+
+        let currentEditingKey = "";
+
+        function connectHeroku() {
+            const apiKey = document.getElementById('api-key').value;
+            const appName = document.getElementById('app-name').value;
+
+            if(!apiKey || !appName) {
+                alert("Zəhmət olmasa API Key və App Name daxil edin!");
+                return;
+            }
+
+            // Keçid animasiyası
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'flex';
+            
+            // Paneli yüklə
+            loadConfigs();
+            addLog(`Heroku serverinə (${appName}) bağlantı quruldu.`, 'info');
+            addLog("⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ aktivləşdirilir...", 'info');
+            simulateLogs();
+        }
+
+        function loadConfigs() {
+            const list = document.getElementById('config-list');
+            list.innerHTML = '';
+            for (const [key, value] of Object.entries(mockConfigs)) {
+                list.innerHTML += `
+                    <div class="config-item" onclick="openModal('${key}', '${value}')">
+                        <div class="config-key">${key}</div>
+                        <div class="config-value">${value.length > 30 ? value.substring(0,30)+'...' : value}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleDyno(checkbox) {
+            const statusBadge = document.getElementById('bot-status');
+            const statusText = document.getElementById('status-text');
+            
+            if(checkbox.checked) {
+                statusBadge.classList.remove('offline');
+                statusText.innerText = 'Online';
+                addLog("Worker Dyno işə salındı. Bot aktivdir.", 'success');
+            } else {
+                statusBadge.classList.add('offline');
+                statusText.innerText = 'Offline';
+                addLog("Worker Dyno dayandırıldı. Bot oflayndır.", 'error');
+            }
+        }
+
+        // Modal Funksiyaları
+        function openModal(key, value) {
+            currentEditingKey = key;
+            document.getElementById('modal-key-title').innerText = key;
+            document.getElementById('modal-value-input').value = mockConfigs[key]; // Real value
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        function saveConfig() {
+            const newValue = document.getElementById('modal-value-input').value;
+            mockConfigs[currentEditingKey] = newValue;
+            closeModal();
+            loadConfigs();
+            addLog(`Config yeniləndi: ${currentEditingKey}`, 'warn');
+            
+            // Burada əslində Heroku API-yə PATCH request atılmalıdır:
+            /*
+            fetch(`https://api.heroku.com/apps/${appName}/config-vars`, {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/vnd.heroku+json; version=3',
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ [currentEditingKey]: newValue })
+            })
+            */
+        }
+
+        // Terminal Log Simulyatoru
+        function addLog(message, type = 'info') {
+            const terminal = document.getElementById('terminal-output');
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            let typeClass = 'log-info';
+            if(type === 'error') typeClass = 'log-error';
+            if(type === 'warn') typeClass = 'log-warn';
+            if(type === 'success') typeClass = 'log-info'; // using info green
+
+            terminal.innerHTML += `<div class="log-line"><span class="log-time">[${timeStr}]</span><span class="${typeClass}">${message}</span></div>`;
+            terminal.scrollTop = terminal.scrollHeight; // Auto scroll
+        }
+
+        // Təsadüfi loglar yaratmaq üçün
+        function simulateLogs() {
+            const messages = [
+                "Ping yoxlanılır... 12ms",
+                "Yeni mesaj qəbul edildi. İşlənir...",
+                "Database bağlantısı stabil.",
+                "Pluginlər uğurla yükləndi.",
+                "SilgiUserbot modulu aktivdir."
+            ];
+            
+            setInterval(() => {
+                if(document.getElementById('dyno-toggle').checked) {
+                    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                    addLog(randomMsg, 'info');
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
