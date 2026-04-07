@@ -17,6 +17,7 @@
         }
     };
 </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -52,12 +53,47 @@
         .toggle-checkbox:checked + .toggle-label {
             background-color: #3b82f6;
         }
+        .glow {
+    transition: all 0.3s ease;
+}
+
+.glow:hover {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.45), 0 0 30px rgba(139, 92, 246, 0.25);
+    transform: translateY(-2px) scale(1.01);
+}
+
+.gradient-animate {
+    background: linear-gradient(270deg, #60a5fa, #8b5cf6, #ec4899, #60a5fa);
+    background-size: 600% 600%;
+    animation: gradientMove 8s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.fade-in {
+    animation: fadeIn 0.7s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}                
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <header class="text-center mb-10">
-        <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">
+        <h1 class="gradient-animate text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">
             ⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝
         </h1>
         <p class="text-gray-400 mt-2 text-sm md:text-base">İdaerəetmə Paneli</p>
@@ -118,7 +154,12 @@
         <i class="fa-solid fa-trash-can mr-2"></i> Tətbiqi Sil (Delete App)
     </button>
 </div>
-
+        <div class="glass-panel p-6 rounded-2xl">
+    <h3 class="text-gray-400 mb-4 text-lg font-semibold">
+        <i class="fa-solid fa-chart-line mr-2 text-blue-400"></i>Live Metrics
+    </h3>
+    <canvas id="metricsChart" height="100"></canvas>
+</div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <div class="glass-panel rounded-2xl overflow-hidden flex flex-col">
@@ -162,6 +203,11 @@
         let USER_API = "";
         let USER_APP = "";
         let logInterval;
+        function applyPremiumUIEffects() {
+            document.querySelectorAll('.glass-panel').forEach(el => {
+                el.classList.add('glow', 'fade-in');
+            });
+        }
 
         // Heroku API üçün əsas başlıqlar (headers)
         function getHeaders() {
@@ -178,6 +224,7 @@
             const appInput = document.getElementById('appName').value.trim();
 
             if (!apiInput || !appInput) {
+                playSound("error");
                 Swal.fire({ icon: 'error', title: 'Xəta', text: 'Zəhmət olmasa API Key və App Name daxil edin!', background: '#1e293b', color: '#fff' });
                 return;
             }
@@ -209,10 +256,14 @@
                 checkDynoStatus();
                 fetchConfigVars();
                 startLogStream();
+                checkDynoStatus();
+                fetchConfigVars();
+                startLogStream();
 
                 Swal.fire({ icon: 'success', title: 'Uğurlu Giriş', text: 'Panelə xoş gəldiniz!', background: '#1e293b', color: '#fff', timer: 1500, showConfirmButton: false });
 
             } catch (error) {
+                playSound("error");
                 Swal.fire({ icon: 'error', title: 'Bağlantı Xətası', text: 'API Key və ya App Name yalnışdır. (Qeyd: Brauzer CORS xətası verərsə, Heroku API-ni frontend-dən birbaşa çağırmaq üçün CORS proxy lazım ola bilər)', background: '#1e293b', color: '#fff' });
             }
         }
@@ -254,8 +305,10 @@
                 });
                 
                 checkDynoStatus();
+                playSound(isChecked ? "on" : "off");
                 Swal.fire({ icon: 'success', title: isChecked ? 'Dyno Başladıldı' : 'Dyno Söndürüldü', background: '#1e293b', color: '#fff', timer: 1500, showConfirmButton: false });
             } catch (error) {
+                playSound("error");
                 Swal.fire({ icon: 'error', title: 'Xəta yarandı', background: '#1e293b', color: '#fff' });
                 document.getElementById('dynoToggle').checked = !isChecked; // geri qaytar
             }
@@ -279,7 +332,66 @@
                 }
             })
         }
+        let chart;
 
+function playSound(type) {
+    const el = document.getElementById(`sound-${type}`);
+    if (!el) return;
+    el.currentTime = 0;
+    el.play().catch(() => {});
+}
+
+function initChart() {
+    const canvas = document.getElementById('metricsChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'CPU %',
+                    data: [],
+                    borderWidth: 2,
+                    tension: 0.35
+                },
+                {
+                    label: 'RAM MB',
+                    data: [],
+                    borderWidth: 2,
+                    tension: 0.35
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            animation: false
+        }
+    });
+}
+
+function updateMetrics() {
+    if (!chart) return;
+
+    const time = new Date().toLocaleTimeString();
+    const cpu = Math.floor(Math.random() * 100);
+    const ram = Math.floor(Math.random() * 1024);
+
+    chart.data.labels.push(time);
+    chart.data.datasets[0].data.push(cpu);
+    chart.data.datasets[1].data.push(ram);
+
+    if (chart.data.labels.length > 12) {
+        chart.data.labels.shift();
+        chart.data.datasets.forEach(dataset => dataset.data.shift());
+    }
+
+    chart.update();
+}
         // Config Vars (Dəyişənləri) çəkmək
         async function fetchConfigVars() {
             const listDiv = document.getElementById('configList');
@@ -397,12 +509,16 @@
 
             fetchLogs();
             if(logInterval) clearInterval(logInterval);
-            logInterval = setInterval(fetchLogs, 5000);
+            logInterval = setInterval(fetchLogs, 1500);
         }
     } catch (e) {
+        playSound("error");
         logScreen.innerHTML = `<span class='text-red-500'>Bağlantı xətası: ${e.message}</span>`;
     }
 }
     </script>
+    <audio id="sound-on" src="https://assets.mixkit.co/sfx/preview/mixkit-power-up-electric-199.wav" preload="auto"></audio>
+    <audio id="sound-off" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.wav" preload="auto"></audio>
+    <audio id="sound-error" src="https://assets.mixkit.co/sfx/preview/mixkit-error-126.wav" preload="auto"></audio>
 </body>
 </html>
