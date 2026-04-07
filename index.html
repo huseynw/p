@@ -466,6 +466,7 @@ window.tailwind.config = {
 
         async function connectBot() {
             unlockAudio();
+            playSound("connect");
             const apiInput = document.getElementById('apiKey').value.trim();
             const appInput = document.getElementById('appName').value.trim();
 
