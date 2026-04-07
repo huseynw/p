@@ -291,16 +291,35 @@ window.tailwind.config = {
         <p>&copy; 2026 ⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ - Bütün hüquqlar qorunur.</p>
     </footer>
 
-    <audio id="sound-on" src="https://assets.mixkit.co/sfx/preview/mixkit-power-up-electric-199.wav" preload="auto"></audio>
-    <audio id="sound-off" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.wav" preload="auto"></audio>
-    <audio id="sound-error" src="https://assets.mixkit.co/sfx/preview/mixkit-error-126.wav" preload="auto"></audio>
-
+    <audio id="sound-on" src="https://assets.mixkit.co/sfx/preview/mixkit-power-up-electric-199.wav" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="sound-off" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.wav" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="sound-error" src="https://assets.mixkit.co/sfx/preview/mixkit-error-126.wav" preload="auto" crossorigin="anonymous"></audio>
     <script>
         let USER_API = "";
         let USER_APP = "";
         let logInterval = null;
         let metricsInterval = null;
         let chart = null;
+        let audioUnlocked = false;
+
+        function unlockAudio() {
+            if (audioUnlocked) return;
+            audioUnlocked = true;
+
+            ["sound-on", "sound-off", "sound-error"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+
+                el.volume = 0;
+                el.play()
+                    .then(() => {
+                        el.pause();
+                        el.currentTime = 0;
+                        el.volume = 1;
+                    })
+                    .catch(() => {});
+            });
+        }
 
         function applyPremiumUIEffects() {
             document.querySelectorAll('.glass-panel').forEach(el => {
@@ -311,8 +330,14 @@ window.tailwind.config = {
         function playSound(type) {
             const el = document.getElementById(`sound-${type}`);
             if (!el) return;
+
+            el.pause();
             el.currentTime = 0;
-            el.play().catch(() => {});
+
+            const playPromise = el.play();
+            if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.catch(err => console.log("Səs bloklandı:", err));
+            }
         }
 
         function showError(title, text) {
@@ -439,6 +464,7 @@ window.tailwind.config = {
         }
 
         async function connectBot() {
+            unlockAudio();
             const apiInput = document.getElementById('apiKey').value.trim();
             const appInput = document.getElementById('appName').value.trim();
 
@@ -530,6 +556,7 @@ window.tailwind.config = {
         }
 
         async function toggleDynoStatus() {
+            unlockAudio();
             const toggleEl = document.getElementById('dynoToggle');
             const isChecked = toggleEl.checked;
             const quantity = isChecked ? 1 : 0;
@@ -568,6 +595,7 @@ window.tailwind.config = {
         }
 
         async function restartDynos() {
+            unlockAudio();
             Swal.fire({
                 title: 'Əminsiniz?',
                 text: 'Bot yenidən başladılacaq!',
@@ -617,6 +645,7 @@ window.tailwind.config = {
         }
 
         async function deleteHerokuApp() {
+            unlockAudio();
             Swal.fire({
                 title: 'Son qərarın budur?',
                 text: 'Bu tətbiq tamamilə silinəcək və geri qaytarmaq mümkün olmayacaq!',
