@@ -17,10 +17,7 @@ exports.handler = async (event) => {
         if (!apiKey || !appName) {
             return {
                 statusCode: 400,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Content-Type": "application/json"
-                },
+                headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
                 body: JSON.stringify({ error: "apiKey və appName tələb olunur" })
             };
         }
@@ -38,19 +35,13 @@ exports.handler = async (event) => {
 
         return {
             statusCode: response.status,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            },
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
             body: text || JSON.stringify({ success: true })
         };
     } catch (error) {
         return {
             statusCode: 500,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            },
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
             body: JSON.stringify({ error: error.message })
         };
     }
