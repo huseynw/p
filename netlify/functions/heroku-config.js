@@ -5,52 +5,47 @@ exports.handler = async (event) => {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST, OPTIONS"
+                "Access-Control-Allow-Methods": "POST, PATCH, OPTIONS"
             },
             body: ""
         };
     }
 
     try {
-        const { apiKey, appName } = JSON.parse(event.body || "{}");
+        const { apiKey, appName, updates } = JSON.parse(event.body || "{}");
 
         if (!apiKey || !appName) {
             return {
                 statusCode: 400,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Content-Type": "application/json"
-                },
+                headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
                 body: JSON.stringify({ error: "apiKey və appName tələb olunur" })
             };
         }
 
-        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
-            method: "GET",
+        const isPatch = event.httpMethod === "PATCH";
+        const method = isPatch ? "PATCH" : "GET";
+
+        const response = await fetch(`https://api.heroku.com/apps/${appName}/config-vars`, {
+            method,
             headers: {
                 "Accept": "application/vnd.heroku+json; version=3",
                 "Authorization": `Bearer ${apiKey}`,
                 "Content-Type": "application/json"
-            }
+            },
+            body: isPatch ? JSON.stringify(updates || {}) : undefined
         });
 
         const text = await response.text();
 
         return {
             statusCode: response.status,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            },
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
             body: text
         };
     } catch (error) {
         return {
             statusCode: 500,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            },
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
             body: JSON.stringify({ error: error.message })
         };
     }
