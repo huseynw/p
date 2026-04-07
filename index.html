@@ -3,584 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ | Premium Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ - Premium Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root {
-            --primary: #00f2fe;
-            --secondary: #4facfe;
-            --bg-dark: #0f172a;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --danger: #ef4444;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.15) 0px, transparent 50%);
-            color: var(--text-main);
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
         }
-
-        /* Glassmorphism Classes */
-        .glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
         }
-
-        /* Login Screen */
-        #login-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        .login-box {
-            padding: 40px;
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-        }
-
-        .login-box h1 {
-            font-size: 28px;
-            margin-bottom: 30px;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            color: white;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
-        }
-
-        /* Dashboard */
-        #dashboard {
-            display: none;
-            padding: 20px;
-            flex: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            font-size: 24px;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
-        }
-
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success);
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .status-badge.offline {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 10px var(--success);
-            animation: pulse 2s infinite;
-        }
-
-        .offline .status-dot {
-            background: var(--danger);
-            box-shadow: 0 0 10px var(--danger);
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        /* Panels */
-        .panel {
-            padding: 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-title {
-            font-size: 18px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
-        }
-
-        /* Dyno Switch */
-        .dyno-control {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: .4s;
-            border-radius: 34px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 3px;
-            bottom: 3px;
-            background-color: var(--text-muted);
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-            background-color: white;
-        }
-
-        /* Config Vars */
-        .config-list {
+        .log-terminal {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            height: 300px;
             overflow-y: auto;
-            max-height: 400px;
-            padding-right: 5px;
         }
+        .log-terminal::-webkit-scrollbar { width: 8px; }
+        .log-terminal::-webkit-scrollbar-track { background: #111; }
+        .log-terminal::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         
-        .config-list::-webkit-scrollbar { width: 6px; }
-        .config-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-
-        .config-item {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6;
         }
-
-        .config-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #3b82f6;
         }
-
-        .config-key { font-weight: bold; color: var(--secondary); margin-bottom: 5px; }
-        .config-value { color: var(--text-muted); font-size: 14px; word-break: break-all; }
-
-        /* Logs Terminal */
-        .terminal {
-            background: #000;
-            border-radius: 12px;
-            padding: 15px;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 14px;
-            height: 450px;
-            overflow-y: auto;
-            border: 1px solid #333;
-            color: #fff;
-        }
-
-        .log-line { margin-bottom: 5px; line-height: 1.4; }
-        .log-time { color: #88c0d0; margin-right: 10px; }
-        .log-info { color: #a3be8c; }
-        .log-error { color: #bf616a; }
-        .log-warn { color: #ebcb8b; }
-
-        /* Quick Actions (Premium Addition) */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: auto;
-        }
-
-        .action-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .action-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--text-main); }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: auto;
-        }
-
-        /* Modal for Editing Config */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-        }
-
-        .modal textarea {
-            width: 100%;
-            height: 100px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 15px 0;
-            resize: vertical;
-        }
-
-        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-        .btn-cancel { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
-        .btn-cancel:hover { background: rgba(239, 68, 68, 0.1); }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <div id="login-screen">
-        <div class="glass login-box">
-            <h1>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝</h1>
-            <div class="input-group">
-                <label><i class="fa-solid fa-key"></i> Heroku API Key</label>
-                <input type="password" id="api-key" placeholder="API açarını daxil et...">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">
+            ⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝
+        </h1>
+        <p class="text-gray-400 mt-2 text-sm md:text-base">Premium İdarəetmə Mərkəzi</p>
+    </header>
+
+    <div id="authSection" class="max-w-md mx-auto glass-panel p-8 rounded-2xl">
+        <h2 class="text-2xl font-semibold mb-6 text-center"><i class="fa-solid fa-right-to-bracket mr-2"></i>Sistemə Giriş</h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Heroku API Key</label>
+                <input type="password" id="apiKey" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors" placeholder="••••••••••••••••">
             </div>
-            <div class="input-group">
-                <label><i class="fa-solid fa-server"></i> App Name (Tətbiq Adı)</label>
-                <input type="text" id="app-name" placeholder="Məsələn: silgi-userbot-1">
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">App Name</label>
+                <input type="text" id="appName" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors" placeholder="silgi-userbot-app">
             </div>
-            <button class="btn" onclick="connectHeroku()">Panelə Daxil Ol <i class="fa-solid fa-arrow-right"></i></button>
+            <button onclick="connectBot()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 mt-4">
+                <i class="fa-solid fa-plug mr-2"></i> Bağlan
+            </button>
         </div>
     </div>
 
-    <div id="dashboard">
-        <header class="glass">
-            <h1>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝</h1>
-            <div class="status-badge" id="bot-status">
-                <div class="status-dot"></div>
-                <span id="status-text">Online</span>
+    <div id="dashboardSection" class="max-w-6xl mx-auto hidden space-y-6">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="glass-panel p-6 rounded-2xl flex flex-col justify-center items-center">
+                <h3 class="text-gray-400 mb-2">Dyno Vəziyyəti</h3>
+                <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in mt-2">
+                    <input type="checkbox" name="toggle" id="dynoToggle" onchange="toggleDynoStatus()" class="toggle-checkbox absolute block w-8 h-8 rounded-full bg-white border-4 border-slate-700 appearance-none cursor-pointer transition-transform duration-300 z-10"/>
+                    <label for="dynoToggle" class="toggle-label block overflow-hidden h-8 rounded-full bg-slate-700 cursor-pointer"></label>
+                </div>
+                <span id="dynoStatusText" class="mt-2 text-sm font-semibold text-red-400">SÖNDÜRÜLÜB</span>
             </div>
-        </header>
 
-        <main class="grid-container">
-            <div class="left-col">
-                <div class="glass panel" style="margin-bottom: 20px;">
-                    <div class="panel-title"><i class="fa-solid fa-power-off"></i> Dyno İdarəetməsi</div>
-                    <div class="dyno-control">
-                        <div>
-                            <h3>Worker Dyno</h3>
-                            <p style="font-size: 12px; color: var(--text-muted);">Botun işləmə vəziyyəti</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="dyno-toggle" checked onchange="toggleDyno(this)">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="text-gray-400 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-circle-info mr-2"></i>App Məlumatları</h3>
+                <ul class="text-sm space-y-2">
+                    <li><span class="text-gray-500">Ad:</span> <span id="infoName" class="font-bold text-blue-400">-</span></li>
+                    <li><span class="text-gray-500">Region:</span> <span id="infoRegion" class="font-bold text-purple-400">-</span></li>
+                    <li><span class="text-gray-500">Stack:</span> <span id="infoStack" class="font-bold text-green-400">-</span></li>
+                </ul>
+            </div>
 
-                    <div class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-bolt"></i> Sürətli Əmrlər</div>
-                    <div class="quick-actions">
-                        <button class="action-btn" onclick="addLog('Bot yenidən başladılır...', 'warn')"><i class="fa-solid fa-rotate-right"></i> Restart</button>
-                        <button class="action-btn" onclick="document.getElementById('terminal-output').innerHTML = ''"><i class="fa-solid fa-broom"></i> Logları Təmizlə</button>
+            <div class="glass-panel p-6 rounded-2xl flex flex-col justify-center items-center">
+                <h3 class="text-gray-400 mb-4">Sistemi Yenilə</h3>
+                <button onclick="restartDynos()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg shadow-red-500/30">
+                    <i class="fa-solid fa-power-off mr-2"></i> Restart All Dynos
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <div class="glass-panel rounded-2xl overflow-hidden flex flex-col">
+                <div class="bg-slate-800 px-4 py-3 flex justify-between items-center border-b border-slate-700">
+                    <h3 class="font-semibold"><i class="fa-solid fa-terminal mr-2"></i>Canlı Loqlar</h3>
+                    <div class="flex space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
                     </div>
                 </div>
-
-                <div class="glass panel">
-                    <div class="panel-title"><i class="fa-solid fa-sliders"></i> Config Vars</div>
-                    <div class="config-list" id="config-list">
-                        </div>
+                <div id="logScreen" class="log-terminal p-4 text-xs lg:text-sm">
+                    Gözlənilir... Tətbiqə bağlanılır...<br>
                 </div>
             </div>
 
-            <div class="glass panel">
-                <div class="panel-title"><i class="fa-solid fa-terminal"></i> Canlı Loglar (Real-time)</div>
-                <div class="terminal" id="terminal-output">
+            <div class="glass-panel rounded-2xl flex flex-col h-[350px]">
+                <div class="bg-slate-800 px-4 py-3 border-b border-slate-700 flex justify-between items-center">
+                    <h3 class="font-semibold"><i class="fa-solid fa-cogs mr-2"></i>Config Vars (Dəyişənlər)</h3>
+                    <button onclick="refreshConfig()" class="text-blue-400 hover:text-blue-300 text-sm"><i class="fa-solid fa-rotate mr-1"></i>Yenilə</button>
+                </div>
+                <div class="p-4 overflow-y-auto flex-1 custom-scrollbar">
+                    <div id="configList" class="space-y-3">
+                        <div class="text-center text-gray-500 mt-10">Məlumatlar yüklənir...</div>
                     </div>
-            </div>
-        </main>
-
-        <footer>
-            &copy; SilgiUserbot | Bütün hüquqlar qorunur.
-        </footer>
-    </div>
-
-    <div id="edit-modal" class="modal">
-        <div class="glass modal-content">
-            <h2 id="modal-key-title" style="margin-bottom: 10px; color: var(--primary);">SESSION</h2>
-            <p style="color: var(--text-muted); font-size: 14px;">Dəyəri redaktə et:</p>
-            <textarea id="modal-value-input"></textarea>
-            <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeModal()" style="width: auto;">Ləğv et</button>
-                <button class="btn" onclick="saveConfig()" style="width: auto;">Yadda Saxla</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <footer class="text-center mt-12 pb-4 text-gray-500 text-sm">
+        <p>&copy; 2026 ⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ - Bütün hüquqlar qorunur.</p>
+    </footer>
 
     <script>
-        // Məlumatları simulyasiya edirik (Çünki brauzerdən birbaşa Heroku API-yə qoşulanda CORS xətası ola bilər. 
-        // Real istifadədə fetch() funksiyaları aşağıdakı məntiq üzərində qurulacaq).
-        
-        let mockConfigs = {
-            "API_ID": "1234567",
-            "API_HASH": "a1b2c3d4e5f6g7h8i9j0",
-            "SESSION": "1AZPWv... (gizlədilib)",
-            "ALIVE_NAME": "⚝ 𝑺𝑰𝑳𝑮𝑰 ⚝",
-            "SUDO_USERS": "123456789 987654321",
-            "HEROKU_API_KEY": "••••••••••••••••",
-            "HEROKU_APP_NAME": "silgi-userbot"
-        };
+        let USER_API = "";
+        let USER_APP = "";
+        let logInterval;
 
-        let currentEditingKey = "";
+        // Heroku API üçün əsas başlıqlar (headers)
+        function getHeaders() {
+            return {
+                "Accept": "application/vnd.heroku+json; version=3",
+                "Authorization": `Bearer ${USER_API}`,
+                "Content-Type": "application/json"
+            };
+        }
 
-        function connectHeroku() {
-            const apiKey = document.getElementById('api-key').value;
-            const appName = document.getElementById('app-name').value;
+        // Sistemə Bağlanma
+        async function connectBot() {
+            const apiInput = document.getElementById('apiKey').value.trim();
+            const appInput = document.getElementById('appName').value.trim();
 
-            if(!apiKey || !appName) {
-                alert("Zəhmət olmasa API Key və App Name daxil edin!");
+            if (!apiInput || !appInput) {
+                Swal.fire({ icon: 'error', title: 'Xəta', text: 'Zəhmət olmasa API Key və App Name daxil edin!', background: '#1e293b', color: '#fff' });
                 return;
             }
 
-            // Keçid animasiyası
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'flex';
-            
-            // Paneli yüklə
-            loadConfigs();
-            addLog(`Heroku serverinə (${appName}) bağlantı quruldu.`, 'info');
-            addLog("⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ aktivləşdirilir...", 'info');
-            simulateLogs();
-        }
+            USER_API = apiInput;
+            USER_APP = appInput;
 
-        function loadConfigs() {
-            const list = document.getElementById('config-list');
-            list.innerHTML = '';
-            for (const [key, value] of Object.entries(mockConfigs)) {
-                list.innerHTML += `
-                    <div class="config-item" onclick="openModal('${key}', '${value}')">
-                        <div class="config-key">${key}</div>
-                        <div class="config-value">${value.length > 30 ? value.substring(0,30)+'...' : value}</div>
-                    </div>
-                `;
+            Swal.fire({ title: 'Bağlanılır...', allowOutsideClick: false, background: '#1e293b', color: '#fff', didOpen: () => { Swal.showLoading() } });
+
+            try {
+                // Tətbiq məlumatlarını yoxla
+                let response = await fetch(`https://api.heroku.com/apps/${USER_APP}`, { headers: getHeaders() });
+                
+                if (!response.ok) throw new Error("Məlumatlar yalnışdır və ya CORS xətası.");
+                
+                let data = await response.json();
+                
+                // Məlumatları UI-a yaz
+                document.getElementById('infoName').innerText = data.name;
+                document.getElementById('infoRegion').innerText = data.region.name;
+                document.getElementById('infoStack').innerText = data.stack.name;
+
+                // Keçid
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                Swal.close();
+
+                // Digər məlumatları çək
+                checkDynoStatus();
+                fetchConfigVars();
+                startLogStream();
+
+                Swal.fire({ icon: 'success', title: 'Uğurlu Giriş', text: 'Panelə xoş gəldiniz!', background: '#1e293b', color: '#fff', timer: 1500, showConfirmButton: false });
+
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Bağlantı Xətası', text: 'API Key və ya App Name yalnışdır. (Qeyd: Brauzer CORS xətası verərsə, Heroku API-ni frontend-dən birbaşa çağırmaq üçün CORS proxy lazım ola bilər)', background: '#1e293b', color: '#fff' });
             }
         }
 
-        function toggleDyno(checkbox) {
-            const statusBadge = document.getElementById('bot-status');
-            const statusText = document.getElementById('status-text');
-            
-            if(checkbox.checked) {
-                statusBadge.classList.remove('offline');
-                statusText.innerText = 'Online';
-                addLog("Worker Dyno işə salındı. Bot aktivdir.", 'success');
-            } else {
-                statusBadge.classList.add('offline');
-                statusText.innerText = 'Offline';
-                addLog("Worker Dyno dayandırıldı. Bot oflayndır.", 'error');
-            }
-        }
+        // Dyno statusunu yoxla
+        async function checkDynoStatus() {
+            try {
+                let res = await fetch(`https://api.heroku.com/apps/${USER_APP}/formation`, { headers: getHeaders() });
+                let data = await res.json();
+                let worker = data.find(d => d.type === 'worker' || d.type === 'web'); // Userbotlar genelde worker olur
+                
+                const toggleBtn = document.getElementById('dynoToggle');
+                const statusTxt = document.getElementById('dynoStatusText');
 
-        // Modal Funksiyaları
-        function openModal(key, value) {
-            currentEditingKey = key;
-            document.getElementById('modal-key-title').innerText = key;
-            document.getElementById('modal-value-input').value = mockConfigs[key]; // Real value
-            document.getElementById('edit-modal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('edit-modal').style.display = 'none';
-        }
-
-        function saveConfig() {
-            const newValue = document.getElementById('modal-value-input').value;
-            mockConfigs[currentEditingKey] = newValue;
-            closeModal();
-            loadConfigs();
-            addLog(`Config yeniləndi: ${currentEditingKey}`, 'warn');
-            
-            // Burada əslində Heroku API-yə PATCH request atılmalıdır:
-            /*
-            fetch(`https://api.heroku.com/apps/${appName}/config-vars`, {
-                method: 'PATCH',
-                headers: {
-                    'Accept': 'application/vnd.heroku+json; version=3',
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ [currentEditingKey]: newValue })
-            })
-            */
-        }
-
-        // Terminal Log Simulyatoru
-        function addLog(message, type = 'info') {
-            const terminal = document.getElementById('terminal-output');
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-            
-            let typeClass = 'log-info';
-            if(type === 'error') typeClass = 'log-error';
-            if(type === 'warn') typeClass = 'log-warn';
-            if(type === 'success') typeClass = 'log-info'; // using info green
-
-            terminal.innerHTML += `<div class="log-line"><span class="log-time">[${timeStr}]</span><span class="${typeClass}">${message}</span></div>`;
-            terminal.scrollTop = terminal.scrollHeight; // Auto scroll
-        }
-
-        // Təsadüfi loglar yaratmaq üçün
-        function simulateLogs() {
-            const messages = [
-                "Ping yoxlanılır... 12ms",
-                "Yeni mesaj qəbul edildi. İşlənir...",
-                "Database bağlantısı stabil.",
-                "Pluginlər uğurla yükləndi.",
-                "SilgiUserbot modulu aktivdir."
-            ];
-            
-            setInterval(() => {
-                if(document.getElementById('dyno-toggle').checked) {
-                    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-                    addLog(randomMsg, 'info');
+                if (worker && worker.quantity > 0) {
+                    toggleBtn.checked = true;
+                    statusTxt.innerText = "AKTİVDİR";
+                    statusTxt.className = "mt-2 text-sm font-semibold text-green-400";
+                } else {
+                    toggleBtn.checked = false;
+                    statusTxt.innerText = "SÖNDÜRÜLÜB";
+                    statusTxt.className = "mt-2 text-sm font-semibold text-red-400";
                 }
-            }, 5000);
+            } catch (e) { console.log(e); }
+        }
+
+        // Dyno Aç/Bağla düyməsi
+        async function toggleDynoStatus() {
+            const isChecked = document.getElementById('dynoToggle').checked;
+            const quantity = isChecked ? 1 : 0;
+            
+            Swal.fire({ title: 'Gözləyin...', background: '#1e293b', color: '#fff', didOpen: () => { Swal.showLoading() } });
+
+            try {
+                await fetch(`https://api.heroku.com/apps/${USER_APP}/formation/worker`, { // 'worker' əvəzinə 'web' də ola bilər app-dan asılı olaraq
+                    method: 'PATCH',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ quantity: quantity })
+                });
+                
+                checkDynoStatus();
+                Swal.fire({ icon: 'success', title: isChecked ? 'Dyno Başladıldı' : 'Dyno Söndürüldü', background: '#1e293b', color: '#fff', timer: 1500, showConfirmButton: false });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Xəta yarandı', background: '#1e293b', color: '#fff' });
+                document.getElementById('dynoToggle').checked = !isChecked; // geri qaytar
+            }
+        }
+
+        // Bütün Dynoları Restart etmək
+        async function restartDynos() {
+            Swal.fire({
+                title: 'Əminsiniz?', text: "Bot yenidən başladılacaq!", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
+                confirmButtonText: 'Bəli, Restart Et', cancelButtonText: 'Ləğv et', background: '#1e293b', color: '#fff'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Restart edilir...', background: '#1e293b', color: '#fff', didOpen: () => { Swal.showLoading() } });
+                    try {
+                        await fetch(`https://api.heroku.com/apps/${USER_APP}/dynos`, { method: 'DELETE', headers: getHeaders() });
+                        Swal.fire({ icon: 'success', title: 'Restart Edildi!', background: '#1e293b', color: '#fff', timer: 1500 });
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Xəta', background: '#1e293b', color: '#fff' });
+                    }
+                }
+            })
+        }
+
+        // Config Vars (Dəyişənləri) çəkmək
+        async function fetchConfigVars() {
+            const listDiv = document.getElementById('configList');
+            try {
+                let res = await fetch(`https://api.heroku.com/apps/${USER_APP}/config-vars`, { headers: getHeaders() });
+                let data = await res.json();
+                
+                listDiv.innerHTML = '';
+                for (let key in data) {
+                    let val = data[key];
+                    listDiv.innerHTML += `
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex justify-between items-center hover:border-blue-500 transition-colors cursor-pointer" onclick="editConfig('${key}', '${val}')">
+                            <div class="overflow-hidden">
+                                <p class="text-blue-400 font-bold text-sm truncate">${key}</p>
+                                <p class="text-gray-400 text-xs truncate mt-1">****************</p>
+                            </div>
+                            <button class="text-gray-400 hover:text-white"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                listDiv.innerHTML = '<div class="text-red-400 text-center">Dəyişənləri çəkmək mümkün olmadı.</div>';
+            }
+        }
+
+        function refreshConfig() { fetchConfigVars(); }
+
+        // Config Var dəyişdirmək
+        async function editConfig(key, currentValue) {
+            const { value: newValue } = await Swal.fire({
+                title: key,
+                input: 'textarea',
+                inputValue: currentValue,
+                showCancelButton: true,
+                confirmButtonText: 'Yenilə',
+                cancelButtonText: 'Ləğv et',
+                background: '#1e293b', color: '#fff',
+                inputValidator: (value) => { if (!value) { return 'Dəyər boş ola bilməz!' } }
+            });
+
+            if (newValue && newValue !== currentValue) {
+                let bodyData = {};
+                bodyData[key] = newValue;
+                
+                Swal.fire({ title: 'Yenilənir...', background: '#1e293b', color: '#fff', didOpen: () => { Swal.showLoading() } });
+                
+                try {
+                    await fetch(`https://api.heroku.com/apps/${USER_APP}/config-vars`, {
+                        method: 'PATCH',
+                        headers: getHeaders(),
+                        body: JSON.stringify(bodyData)
+                    });
+                    fetchConfigVars();
+                    Swal.fire({ icon: 'success', title: 'Uğurla dəyişdirildi!', background: '#1e293b', color: '#fff', timer: 1500 });
+                } catch (e) {
+                    Swal.fire({ icon: 'error', title: 'Xəta baş verdi!', background: '#1e293b', color: '#fff' });
+                }
+            }
+        }
+
+        // Loqları çəkmək (Sadeleşdirilmiş Polling)
+        async function startLogStream() {
+            const logScreen = document.getElementById('logScreen');
+            
+            try {
+                // Heroku API-dən log session URL-i alırıq
+                let res = await fetch(`https://api.heroku.com/apps/${USER_APP}/log-sessions`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ lines: 50, tail: true })
+                });
+                let data = await res.json();
+                
+                if (data.logplex_url) {
+                    // Logplex URL-dən loqları mütəmadi oxuyuruq
+                    logInterval = setInterval(async () => {
+                        try {
+                            let logRes = await fetch(data.logplex_url);
+                            let text = await logRes.text();
+                            if(text) {
+                                // Loqları səliqəyə salıb ekrana yazdırırıq
+                                logScreen.innerHTML = text.replace(/\n/g, '<br>');
+                                logScreen.scrollTop = logScreen.scrollHeight; // Avtomatik aşağı sürüşdür
+                            }
+                        } catch (e) {}
+                    }, 3000); // Hər 3 saniyədən bir yenilə
+                }
+            } catch (e) {
+                logScreen.innerHTML = "<span class='text-red-500'>Loqları çəkmək mümkün olmadı.</span>";
+            }
         }
     </script>
 </body>
