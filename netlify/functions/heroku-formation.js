@@ -17,22 +17,16 @@ exports.handler = async (event) => {
         if (!apiKey || !appName) {
             return {
                 statusCode: 400,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Content-Type": "application/json"
-                },
+                headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
                 body: JSON.stringify({ error: "apiKey və appName tələb olunur" })
             };
         }
 
         if (event.httpMethod === "PATCH") {
-            if (!processType && processType !== "web" && processType !== "worker") {
+            if (!processType) {
                 return {
                     statusCode: 400,
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
                     body: JSON.stringify({ error: "processType tələb olunur" })
                 };
             }
@@ -51,10 +45,7 @@ exports.handler = async (event) => {
 
             return {
                 statusCode: response.status,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Content-Type": "application/json"
-                },
+                headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
                 body: text
             };
         }
@@ -72,19 +63,13 @@ exports.handler = async (event) => {
 
         return {
             statusCode: response.status,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            },
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
             body: text
         };
     } catch (error) {
         return {
             statusCode: 500,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            },
+            headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
             body: JSON.stringify({ error: error.message })
         };
     }
