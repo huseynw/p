@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ - Premium Panel</title>
+    <title>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ - Idarəetmə Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
     // Tailwind istehsalat xəbərdarlığını gizlət
@@ -60,7 +60,7 @@
         <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-wider">
             ⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝
         </h1>
-        <p class="text-gray-400 mt-2 text-sm md:text-base">Premium İdarəetmə Mərkəzi</p>
+        <p class="text-gray-400 mt-2 text-sm md:text-base">İdaerəetmə Paneli</p>
     </header>
 
     <div id="authSection" class="max-w-md mx-auto glass-panel p-8 rounded-2xl">
@@ -103,12 +103,21 @@
             </div>
 
             <div class="glass-panel p-6 rounded-2xl flex flex-col justify-center items-center">
-                <h3 class="text-gray-400 mb-4">Sistemi Yenilə</h3>
+                <h3 class="text-gray-400 mb-4">Botu yenidən başlat</h3>
                 <button onclick="restartDynos()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg shadow-red-500/30">
                     <i class="fa-solid fa-power-off mr-2"></i> Restart All Dynos
                 </button>
             </div>
         </div>
+        <div class="glass-panel p-6 rounded-2xl border-t-4 border-red-600">
+    <h3 class="text-red-500 font-bold mb-4 flex items-center">
+        <i class="fa-solid fa-triangle-exclamation mr-2"></i> Təhlükəli Zona
+    </h3>
+    <p class="text-gray-400 text-xs mb-4">Bu əməliyyat tətbiqi Heroku-dan tamamilə siləcək. Geri qaytarmaq mümkün deyil!</p>
+    <button onclick="deleteHerokuApp()" class="w-full bg-transparent border border-red-600 hover:bg-red-600 text-red-600 hover:text-white font-bold py-2 px-4 rounded-lg transition-all">
+        <i class="fa-solid fa-trash-can mr-2"></i> Tətbiqi Sil (Delete App)
+    </button>
+</div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
