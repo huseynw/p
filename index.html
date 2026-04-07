@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚝ 𝑺𝑰𝑳𝑮𝑰 𝑼𝑺𝑬𝑹𝑩𝑶𝑻 ⚝ - Premium Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    // Tailwind istehsalat xəbərdarlığını gizlət
+    window.tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    dark: '#0f172a'
+                }
+            }
+        }
+    };
+</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -317,56 +329,50 @@
         // Loqları çəkmək (Sadeleşdirilmiş Polling)
         async function startLogStream() {
     const logScreen = document.getElementById('logScreen');
-    logScreen.innerHTML = "<span class='text-blue-400'><i class='fa-solid fa-spinner fa-spin mr-2'></i>Heroku serverinə bağlanılır və loqlar çəkilir...</span><br>";
+    logScreen.innerHTML = "<span class='text-blue-400'><i class='fa-solid fa-sync fa-spin mr-2'></i>Təhlükəsiz kanal yaradılır...</span><br>";
 
     try {
-        // 1. Heroku-dan loq sessiyası URL-ni alırıq
-        // tail: false edirik ki, streaming əvəzinə hazır bloku çəkib proxy ilə rahat oxuyaq
+        // 1. Log Session URL alırıq
         let res = await fetch(`https://api.heroku.com/apps/${USER_APP}/log-sessions`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify({ lines: 100, tail: false })
         });
-
-        if (!res.ok) throw new Error("Log oxumaq üçün icazə rədd edildi.");
-
         let data = await res.json();
 
         if (data.logplex_url) {
-            // 2. CORS xətasını bloklamaq üçün AllOrigins Proxy istifadə edirik
-            const proxyUrl = 'https://api.allorigins.win/raw?url=';
-            
             const fetchLogs = async () => {
                 try {
-                    let logRes = await fetch(proxyUrl + encodeURIComponent(data.logplex_url));
+                    // 2. Öz Netlify Funksiyamıza sorğu göndəririk (CORS-suz)
+                    let logRes = await fetch('/.netlify/functions/get-logs', {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            url: data.logplex_url,
+                            apiKey: USER_API 
+                        })
+                    });
                     let text = await logRes.text();
 
-                    if (text && text.trim() !== "") {
-                        // 3. Premium rəngləndirmə (Syntax Highlighting)
+                    if (text) {
                         let formattedText = text
-                            .replace(/</g, "&lt;").replace(/>/g, "&gt;") // Təhlükəsizlik (HTML injection qarşısını almaq)
-                            .replace(/^([^ ]+) (app|heroku)\[([^\]]+)\]:/gm, "<span class='text-purple-400'>$1</span> <span class='text-blue-400'>$2[$3]:</span>") // Tarix və App adı
-                            .replace(/(Error|Exception|Failed|Crash)/gi, "<span class='text-red-500 font-bold bg-red-900/30 px-1 rounded'>$1</span>") // Xətaları qırmızı et
-                            .replace(/([0-9]{3} [A-Z]+)/g, "<span class='text-yellow-400'>$1</span>") // HTTP status kodları
-                            .replace(/\n/g, '<br>'); // Yeni sətirləri HTML formatına sal
+                            .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                            .replace(/^([^ ]+) (app|heroku)\[([^\]]+)\]:/gm, "<span class='text-purple-400'>$1</span> <span class='text-blue-400'>$2[$3]:</span>")
+                            .replace(/(Error|Exception|Failed|Crash|CRITICAL)/gi, "<span class='text-red-500 font-bold bg-red-900/30 px-1 rounded'>$1</span>")
+                            .replace(/(Success|Connected|Started|Done)/gi, "<span class='text-green-400 font-bold'>$1</span>")
+                            .replace(/\n/g, '<br>');
 
                         logScreen.innerHTML = formattedText;
-                        logScreen.scrollTop = logScreen.scrollHeight; // Həmişə ən son loqu görmək üçün aşağı sürüşdür
+                        logScreen.scrollTop = logScreen.scrollHeight;
                     }
-                } catch (e) {
-                    console.log("Log çəkilmə xətası (Proxy):", e);
-                }
+                } catch (e) { console.error("Proxy xətası:", e); }
             };
 
-            // İlk loqları dərhal çək
             fetchLogs();
-
-            // Hər 5 saniyədən bir loqları avtomatik yenilə (Real-time hissi üçün)
             if(logInterval) clearInterval(logInterval);
             logInterval = setInterval(fetchLogs, 5000);
         }
     } catch (e) {
-        logScreen.innerHTML = `<span class='text-red-500'><i class='fa-solid fa-triangle-exclamation mr-2'></i>Xəta: ${e.message}</span><br><span class='text-gray-400 text-xs mt-2 block'>Mümkün səbəb: Brauzerinizin CORS siyasəti və ya API açarının icazələri.</span>`;
+        logScreen.innerHTML = `<span class='text-red-500'>Bağlantı xətası: ${e.message}</span>`;
     }
 }
     </script>
