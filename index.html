@@ -449,7 +449,10 @@ window.tailwind.config = {
 
         const text = await res.text();
 
-        output.innerHTML += text.replace(/\n/g, "<br>");
+        output.innerHTML += text
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\n/g, "<br>");
     } catch (e) {
         output.innerHTML += `<span class="text-red-500">${e.message}</span>`;
     }
