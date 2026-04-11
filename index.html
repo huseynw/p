@@ -260,6 +260,20 @@ window.tailwind.config = {
                     Gözlənilir... Tətbiqə bağlanılır...<br>
                 </div>
             </div>
+            <div class="glass-panel rounded-2xl overflow-hidden flex flex-col mt-6">
+  <div class="bg-slate-800 px-4 py-3 border-b border-slate-700">
+    <h3><i class="fa-solid fa-terminal mr-2"></i>Heroku Bash</h3>
+  </div>
+
+  <div id="terminalOutput" class="log-terminal p-4 text-sm h-64"></div>
+
+  <div class="flex">
+    <input id="terminalInput" placeholder="command yaz (node -v)"
+      class="flex-1 bg-slate-900 p-3 outline-none text-white">
+    <button onclick="runCommand()"
+      class="bg-blue-600 px-4">Run</button>
+  </div>
+</div>
 
             <div class="glass-panel rounded-2xl p-6">
                 <h3 class="text-xl font-bold mb-4 text-purple-400">
@@ -414,6 +428,34 @@ window.tailwind.config = {
                 }
             });
         }
+        async function runCommand() {
+    const input = document.getElementById("terminalInput");
+    const output = document.getElementById("terminalOutput");
+
+    const cmd = input.value.trim();
+    if (!cmd) return;
+
+    output.innerHTML += `<br><span class="text-blue-400">$ ${cmd}</span><br>`;
+
+    try {
+        const res = await fetch("/.netlify/functions/heroku-run", {
+            method: "POST",
+            body: JSON.stringify({
+                apiKey: USER_API,
+                appName: USER_APP,
+                command: cmd
+            })
+        });
+
+        const text = await res.text();
+
+        output.innerHTML += text.replace(/\n/g, "<br>");
+    } catch (e) {
+        output.innerHTML += `<span class="text-red-500">${e.message}</span>`;
+    }
+
+    input.value = "";
+}
 
         function updateMetrics() {
             if (!chart) return;
