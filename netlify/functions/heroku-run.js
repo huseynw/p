@@ -2,7 +2,8 @@ exports.handler = async (event) => {
     try {
         const { apiKey, appName, command } = JSON.parse(event.body);
 
-        const dynoRes = await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
+        // command run et
+        await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
             method: "POST",
             headers: {
                 "Accept": "application/vnd.heroku+json; version=3",
@@ -11,26 +12,33 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 command: command,
-                attach: true,   // 🔥 ƏSAS FİX
+                attach: false,
                 type: "run"
             })
         });
 
-        const dyno = await dynoRes.json();
+        // biraz gözlə ki output loga düşsün
+        await new Promise(r => setTimeout(r, 2000));
 
-        if (!dyno.attach_url) {
-            return {
-                statusCode: 500,
-                body: "attach_url alınmadı"
-            };
-        }
-
-        // 🔥 attach_url-dan çıxışı oxu
-        const outputRes = await fetch(dyno.attach_url, {
-            method: "GET"
+        // log session aç
+        const logRes = await fetch(`https://api.heroku.com/apps/${appName}/log-sessions`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/vnd.heroku+json; version=3",
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                lines: 50,
+                tail: false
+            })
         });
 
-        const text = await outputRes.text();
+        const logData = await logRes.json();
+
+        // logları çək
+        const logs = await fetch(logData.logplex_url);
+        const text = await logs.text();
 
         return {
             statusCode: 200,
