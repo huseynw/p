@@ -2,15 +2,7 @@ exports.handler = async (event) => {
     try {
         const { apiKey, appName, command } = JSON.parse(event.body);
 
-        if (!apiKey || !appName || !command) {
-            return {
-                statusCode: 400,
-                body: "Missing data"
-            };
-        }
-
-        // Heroku one-off dyno (bash run)
-        const createDyno = await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
+        const dynoRes = await fetch(`https://api.heroku.com/apps/${appName}/dynos`, {
             method: "POST",
             headers: {
                 "Accept": "application/vnd.heroku+json; version=3",
@@ -19,16 +11,30 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 command: command,
-                attach: false,
+                attach: true,   // 🔥 ƏSAS FİX
                 type: "run"
             })
         });
 
-        const data = await createDyno.json();
+        const dyno = await dynoRes.json();
+
+        if (!dyno.attach_url) {
+            return {
+                statusCode: 500,
+                body: "attach_url alınmadı"
+            };
+        }
+
+        // 🔥 attach_url-dan çıxışı oxu
+        const outputRes = await fetch(dyno.attach_url, {
+            method: "GET"
+        });
+
+        const text = await outputRes.text();
 
         return {
             statusCode: 200,
-            body: `Started: ${data.id}\nCommand: ${command}`
+            body: text
         };
 
     } catch (e) {
